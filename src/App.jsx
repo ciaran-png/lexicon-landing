@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { Analytics } from "@vercel/analytics/next";
 
 // ── Constants & Data ──────────────────────────────────────────────
 const SCHEMA_FIELDS = [
@@ -552,6 +553,7 @@ export default function App() {
       <ComplianceSection />
       <EarlyAccess />
       <Footer />
+      <Analytics />
     </div>
   );
 }
