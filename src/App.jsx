@@ -13,18 +13,18 @@ const SCHEMA_FIELDS = [
 ];
 
 const DEMO_STEPS = [
-  { phase: "DISCOVER", label: "Scan Tenant Schema", description: "Lexicon connects to your Workday tenant and crawls every data source, field, and custom object. No manual configuration needed.", detail: "4,500+ fields across 16 data sources scanned in under 90 seconds", visual: "scan" },
-  { phase: "DETECT", label: "Find Ghost Fields", description: "Workday silently omits fields your integration user can't see. Lexicon detects these invisible gaps by comparing your actual schema against the known standard.", detail: "23 ghost fields detected — fields your current tools don't know exist", visual: "detect" },
-  { phase: "INFER", label: "Understand Meaning", description: "Custom fields like cf_variable_comp_plan_c have no documentation. Lexicon's semantic engine infers what each field actually means using pattern analysis and domain intelligence.", detail: "142 custom fields semantically resolved with 87% avg confidence", visual: "infer" },
-  { phase: "TRANSLATE", label: "Natural Language Control", description: "Ask questions in plain English. Lexicon translates to valid WQL, validates against your actual schema, and flags any compliance risks before execution.", detail: '"Show me all employees whose variable comp changed last quarter"', visual: "translate" },
+  { phase: "DISCOVER", label: "Scan Tenant Schema", description: "Argot connects to your Workday tenant and crawls every data source, field, and custom object. No manual configuration needed.", detail: "4,500+ fields across 16 data sources scanned in under 90 seconds", visual: "scan" },
+  { phase: "DETECT", label: "Find Ghost Fields", description: "Workday silently omits fields your integration user can't see. Argot detects these invisible gaps by comparing your actual schema against the known standard.", detail: "23 ghost fields detected — fields your current tools don't know exist", visual: "detect" },
+  { phase: "INFER", label: "Understand Meaning", description: "Custom fields like cf_variable_comp_plan_c have no documentation. Argot's semantic engine infers what each field actually means using pattern analysis and domain intelligence.", detail: "142 custom fields semantically resolved with 87% avg confidence", visual: "infer" },
+  { phase: "TRANSLATE", label: "Natural Language Control", description: "Ask questions in plain English. Argot translates to valid WQL, validates against your actual schema, and flags any compliance risks before execution.", detail: '"Show me all employees whose variable comp changed last quarter"', visual: "translate" },
 ];
 
 const BENTO_FEATURES = [
-  { title: "Ghost Field Detection", description: "Workday's APIs silently omit fields when permissions are missing. You can't fix what you can't see. Lexicon maps expected vs. actual schema to reveal what's invisible.", icon: "👻", span: "wide" },
+  { title: "Ghost Field Detection", description: "Workday's APIs silently omit fields when permissions are missing. You can't fix what you can't see. Argot maps expected vs. actual schema to reveal what's invisible.", icon: "👻", span: "wide" },
   { title: "9,500+ Rows of Domain Intelligence", description: "Field mappings, security permissions, WQL syntax, HCIM standards, and API structures — curated from enterprise documentation across industries.", icon: "🧠", span: "normal" },
   { title: "EU AI Act Compliant", description: "Human-in-the-loop gates on high-risk HR fields. Full audit trails. Bias detection on compensation, hiring, and termination decisions. Ready for August 2026.", icon: "🛡️", span: "normal" },
-  { title: "Natural Language → WQL", description: "Business users describe what they need in plain English. Lexicon generates validated WQL with full explainability — every translation shows its reasoning chain.", icon: "💬", span: "wide" },
-  { title: "Semantic Inference Engine", description: "When cf_custom_field_55 has no documentation, Lexicon infers meaning from naming patterns, value distributions, and cross-tenant intelligence.", icon: "🔮", span: "normal" },
+  { title: "Natural Language → WQL", description: "Business users describe what they need in plain English. Argot generates validated WQL with full explainability — every translation shows its reasoning chain.", icon: "💬", span: "wide" },
+  { title: "Semantic Inference Engine", description: "When cf_custom_field_55 has no documentation, Argot infers meaning from naming patterns, value distributions, and cross-tenant intelligence.", icon: "🔮", span: "normal" },
   { title: "Zero-Touch Deployment", description: "Read-only OAuth connection. No data leaves your tenant. No modifications to your Workday configuration. Scan, understand, control.", icon: "⚡", span: "normal" },
 ];
 
@@ -103,9 +103,9 @@ function Nav() {
     }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>L</div>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-primary)" }}>LEXICON</span>
-          <span style={{ fontSize: 10, fontWeight: 500, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>AI</span>
+          <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>A</div>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-primary)" }}>ARGOT</span>
+          <span style={{ fontSize: 10, fontWeight: 500, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>LAYER</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
           {["How It Works", "Features", "Compliance"].map(label => (
@@ -141,7 +141,7 @@ function SchemaVisualization() {
         <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef5b5b" }} />
         <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#f0b429" }} />
         <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#4ecdc4" }} />
-        <span style={{ marginLeft: 12, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>lexicon — schema_scan — tenant_acme_corp</span>
+        <span style={{ marginLeft: 12, fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-tertiary)", letterSpacing: "0.05em" }}>argot — schema_scan — tenant_acme_corp</span>
       </div>
       <div style={{ padding: "28px 24px", minHeight: 220 }}>
         {phase === "scanning" && <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, var(--accent-blue), transparent)", animation: "scanLine 0.8s ease-in-out", opacity: 0.6 }} />}
@@ -200,7 +200,7 @@ function Hero() {
             <p style={{ fontSize: 17, lineHeight: 1.7, color: "var(--text-secondary)", maxWidth: 480, marginBottom: 36, animation: "fadeInUp 0.6s ease-out 0.2s both" }}>
               Every enterprise customizes Workday differently. Illuminate trains cross-tenant on standard schemas —
               it can't see your custom fields, your ghost fields, your spaghetti architecture.
-              <span style={{ color: "var(--text-primary)", fontWeight: 500 }}> Lexicon can.</span>
+              <span style={{ color: "var(--text-primary)", fontWeight: 500 }}> Argot can.</span>
             </p>
             <div style={{ display: "flex", gap: 14, animation: "fadeInUp 0.6s ease-out 0.3s both" }}>
               <a href="#early-access" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--text-primary)", color: "var(--bg-primary)", padding: "12px 26px", borderRadius: 10, fontSize: 14, fontWeight: 600, textDecoration: "none", transition: "transform 0.2s, opacity 0.2s" }}
@@ -266,7 +266,7 @@ function DemoVisual({ step, isActive }) {
   if (step.visual === "scan") {
     return (
       <div style={shared}>
-        <div style={{ color: "var(--text-tertiary)", marginBottom: 16, fontSize: 10, letterSpacing: "0.08em" }}>$ lexicon scan --tenant acme_corp --mode discovery</div>
+        <div style={{ color: "var(--text-tertiary)", marginBottom: 16, fontSize: 10, letterSpacing: "0.08em" }}>$ argot scan --tenant acme_corp --mode discovery</div>
         {["DS_Worker_Core", "DS_Compensation", "DS_Talent_Mgmt", "DS_Recruiting", "DS_Benefits", "DS_Time_Track"].map((ds, i) => (
           <div key={ds} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, animation: `slideInRight 0.4s ease-out ${i * 0.15}s both` }}>
             <span style={{ color: "var(--accent-green)" }}>✓</span>
@@ -418,7 +418,7 @@ function ComplianceSection() {
             </h2>
             <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--text-secondary)", marginBottom: 28 }}>
               The EU AI Act classifies HR AI as high-risk, with full obligations taking effect August 2026.
-              Lexicon builds compliance into the architecture — not as an afterthought, but as a core design principle.
+              Argot builds compliance into the architecture — not as an afterthought, but as a core design principle.
             </p>
             {[
               { title: "Bias Detection", desc: "Every field classified by risk level: compensation, hiring, termination, performance. Automated flags before any data modification." },
@@ -530,10 +530,10 @@ function Footer() {
     <footer style={{ padding: "40px 24px", borderTop: "1px solid var(--border-subtle)" }}>
       <Container style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 22, height: 22, borderRadius: 5, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>L</div>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", letterSpacing: "0.04em" }}>LEXICON</span>
+          <div style={{ width: 22, height: 22, borderRadius: 5, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>A</div>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", letterSpacing: "0.04em" }}>ARGOT LAYER</span>
         </div>
-        <div style={{ fontSize: 12, color: "var(--text-tertiary)" }}>© 2026 Lexicon AI. The semantic translation layer for Workday HCM.</div>
+        <div style={{ fontSize: 12, color: "var(--text-tertiary)" }}>© 2026 Argot Layer. The semantic translation layer for Workday HCM.</div>
       </Container>
     </footer>
   );
