@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 
 // ── Constants & Data ──────────────────────────────────────────────
 const SCHEMA_FIELDS = [
@@ -208,7 +208,7 @@ function Hero() {
                 onMouseEnter={e => { e.target.style.transform = "translateY(-1px)"; e.target.style.opacity = "0.9"; }}
                 onMouseLeave={e => { e.target.style.transform = "translateY(0)"; e.target.style.opacity = "1"; }}>
                 Request Early Access
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M 1 7 L 11 7 M 8 3 L 12 7 L 8 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M 1 7 L 11 7 M 8 3 L 12 7 L 8 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </a>
               <a href="#how-it-works" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "transparent", border: "1px solid var(--border-subtle)", color: "var(--text-secondary)", padding: "12px 26px", borderRadius: 10, fontSize: 14, fontWeight: 500, textDecoration: "none", transition: "all 0.3s" }}
                 onMouseEnter={e => { e.target.style.borderColor = "var(--border-glow-hover)"; e.target.style.color = "var(--text-primary)"; }}
@@ -331,7 +331,7 @@ function DemoVisual({ step, isActive }) {
       <svg width="20" height="20" viewBox="0 0 20 20" style={{ display: "block", margin: "0 auto 16px" }}><path d="M 10 2 L 10 14 M 6 10 L 10 15 L 14 10" stroke="var(--accent-blue)" strokeWidth="1.5" fill="none" strokeLinecap="round" /></svg>
       <div style={{ padding: "12px 16px", borderRadius: 8, background: "rgba(91,141,239,0.06)", border: "1px solid rgba(91,141,239,0.15)" }}>
         <div style={{ color: "var(--accent-blue)", fontSize: 10, marginBottom: 6, letterSpacing: "0.08em" }}>GENERATED WQL</div>
-        <div style={{ color: "var(--accent-cyan)", fontSize: 13 }}>SELECT cf_variable_comp_plan_c FROM DS_Compensation<br/>WHERE effective_date &gt;= '2025-10-01'</div>
+        <div style={{ color: "var(--accent-cyan)", fontSize: 13 }}>SELECT cf_variable_comp_plan_c FROM DS_Compensation<br />WHERE effective_date &gt;= '2025-10-01'</div>
       </div>
       <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 6, background: "rgba(239,91,91,0.06)", border: "1px solid rgba(239,91,91,0.12)", color: "var(--accent-amber)", fontSize: 11 }}>
         ⚠️ HIGH BIAS RISK: Field relates to compensation. Human review recommended.
