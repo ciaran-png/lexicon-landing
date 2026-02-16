@@ -53,6 +53,56 @@ const css = `
   @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
   .noise-overlay::before { content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9999; opacity: 0.4; }
   ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg-primary); } ::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
+
+  /* ── Responsive Grid Classes ─────────────────────────────────── */
+  .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-subtle); border-radius: 14px; overflow: hidden; }
+  .hiw-grid { display: grid; grid-template-columns: 340px 1fr; gap: 40px; }
+  .bento-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-subtle); border-radius: 16px; overflow: hidden; }
+  .compliance-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+  .mobile-menu { display: none; }
+  .schema-arrow-container { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .schema-fields-row { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
+
+  /* ── Tablet: ≤ 1024px ────────────────────────────────────────── */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hiw-grid { grid-template-columns: 1fr; gap: 24px; }
+    .bento-grid { grid-template-columns: repeat(2, 1fr); }
+    .bento-grid > div { grid-column: span 1 !important; }
+    .compliance-grid { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  /* ── Tablet: ≤ 768px ─────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-hamburger { display: flex; align-items: center; justify-content: center; }
+    .mobile-menu {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 200;
+      background: rgba(9,9,11,0.97); backdrop-filter: blur(20px);
+      flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--text-primary); text-decoration: none; font-size: 18px; font-weight: 600; letter-spacing: 0.01em; }
+    .mobile-menu .mobile-close { position: absolute; top: 20px; right: 24px; background: none; border: none; color: var(--text-primary); font-size: 28px; cursor: pointer; }
+    .stats-grid { grid-template-columns: 1fr; }
+    .hero-grid h1 { font-size: 30px !important; }
+    .hero-grid p { font-size: 15px !important; }
+    .footer-inner { flex-direction: column; gap: 16px; text-align: center; }
+    .schema-fields-row { flex-direction: column; gap: 12px; }
+    .schema-arrow-container svg { transform: rotate(90deg); }
+  }
+
+  /* ── Phone: ≤ 480px ──────────────────────────────────────────── */
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .bento-grid { grid-template-columns: 1fr; }
+    .hero-grid h1 { font-size: 30px !important; }
+    section { padding: 60px 0 !important; }
+  }
 `;
 
 // ── Utility Components ────────────────────────────────────────────
@@ -89,35 +139,55 @@ function Container({ children, style }) {
 // ── Nav ───────────────────────────────────────────────────────────
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+  useEffect(() => {
+    if (menuOpen) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => { document.body.style.overflow = ""; };
+  }, [menuOpen]);
   return (
-    <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-      background: scrolled ? "rgba(9,9,11,0.85)" : "transparent",
-      backdropFilter: scrolled ? "blur(20px) saturate(1.3)" : "none",
-      borderBottom: scrolled ? "1px solid var(--border-subtle)" : "1px solid transparent",
-      transition: "all 0.4s ease", padding: "0 24px",
-    }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>A</div>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-primary)" }}>ARGOT</span>
-          <span style={{ fontSize: 10, fontWeight: 500, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>LAYER</span>
+    <>
+      <nav style={{
+        position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+        background: scrolled ? "rgba(9,9,11,0.85)" : "transparent",
+        backdropFilter: scrolled ? "blur(20px) saturate(1.3)" : "none",
+        borderBottom: scrolled ? "1px solid var(--border-subtle)" : "1px solid transparent",
+        transition: "all 0.4s ease", padding: "0 24px",
+      }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>A</div>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 600, letterSpacing: "0.05em", color: "var(--text-primary)" }}>ARGOT</span>
+            <span style={{ fontSize: 10, fontWeight: 500, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>LAYER</span>
+          </div>
+          <div className="nav-links">
+            {["How It Works", "Features", "Compliance"].map(label => (
+              <a key={label} href={`#${label.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: "var(--text-secondary)", textDecoration: "none", fontSize: 13, fontWeight: 500, letterSpacing: "0.01em", transition: "color 0.3s" }}
+                onMouseEnter={e => e.target.style.color = "var(--text-primary)"} onMouseLeave={e => e.target.style.color = "var(--text-secondary)"}>{label}</a>
+            ))}
+            <a href="#early-access" style={{ background: "var(--text-primary)", color: "var(--bg-primary)", padding: "7px 18px", borderRadius: 7, fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "opacity 0.3s" }}
+              onMouseEnter={e => e.target.style.opacity = "0.85"} onMouseLeave={e => e.target.style.opacity = "1"}>Request Access</a>
+          </div>
+          <button className="nav-hamburger" onClick={() => setMenuOpen(true)} aria-label="Open menu">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
-          {["How It Works", "Features", "Compliance"].map(label => (
-            <a key={label} href={`#${label.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: "var(--text-secondary)", textDecoration: "none", fontSize: 13, fontWeight: 500, letterSpacing: "0.01em", transition: "color 0.3s" }}
-              onMouseEnter={e => e.target.style.color = "var(--text-primary)"} onMouseLeave={e => e.target.style.color = "var(--text-secondary)"}>{label}</a>
-          ))}
-          <a href="#early-access" style={{ background: "var(--text-primary)", color: "var(--bg-primary)", padding: "7px 18px", borderRadius: 7, fontSize: 13, fontWeight: 600, textDecoration: "none", transition: "opacity 0.3s" }}
-            onMouseEnter={e => e.target.style.opacity = "0.85"} onMouseLeave={e => e.target.style.opacity = "1"}>Request Access</a>
-        </div>
+      </nav>
+      <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
+        <button className="mobile-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">✕</button>
+        {["How It Works", "Features", "Compliance"].map(label => (
+          <a key={label} href={`#${label.toLowerCase().replace(/\s+/g, "-")}`} onClick={() => setMenuOpen(false)}>{label}</a>
+        ))}
+        <a href="#early-access" onClick={() => setMenuOpen(false)} style={{ background: "var(--text-primary)", color: "var(--bg-primary)", padding: "12px 32px", borderRadius: 10, fontWeight: 700 }}>Request Access</a>
       </div>
-    </nav>
+    </>
   );
 }
 
@@ -146,12 +216,12 @@ function SchemaVisualization() {
       </div>
       <div style={{ padding: "28px 24px", minHeight: 220 }}>
         {phase === "scanning" && <div style={{ position: "absolute", left: 0, right: 0, height: 2, background: "linear-gradient(90deg, transparent, var(--accent-blue), transparent)", animation: "scanLine 0.8s ease-in-out", opacity: 0.6 }} />}
-        <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 24 }}>
+        <div className="schema-fields-row" style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 24 }}>
           <div style={{ flex: 1, padding: "14px 18px", background: phase === "scanning" ? "rgba(91,141,239,0.06)" : "rgba(255,255,255,0.02)", border: `1px solid ${phase === "scanning" ? "rgba(91,141,239,0.2)" : "var(--border-subtle)"}`, borderRadius: 10, transition: "all 0.5s ease" }}>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-tertiary)", marginBottom: 6, letterSpacing: "0.08em", textTransform: "uppercase" }}>Raw Field</div>
             <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, color: "var(--accent-blue)", fontWeight: 500 }}>{field.raw}</div>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+          <div className="schema-arrow-container" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
             <svg width="40" height="20" viewBox="0 0 40 20">
               <defs><linearGradient id="arrowGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="var(--accent-blue)" stopOpacity={phase !== "scanning" ? 1 : 0.3} /><stop offset="100%" stopColor="var(--accent-cyan)" stopOpacity={phase === "resolved" ? 1 : 0.3} /></linearGradient></defs>
               <path d="M 2 10 L 30 10 M 26 5 L 32 10 L 26 15" fill="none" stroke="url(#arrowGrad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -188,7 +258,7 @@ function Hero() {
     <section style={{ minHeight: "100vh", display: "flex", alignItems: "center", position: "relative", paddingTop: 80 }}>
       <div style={{ position: "absolute", top: -200, left: "50%", transform: "translateX(-50%)", width: 800, height: 600, background: "radial-gradient(ellipse at center, rgba(91,141,239,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
       <Container>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+        <div className="hero-grid">
           <div>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 14px", borderRadius: 20, border: "1px solid var(--border-glow)", marginBottom: 28, animation: "fadeInUp 0.6s ease-out" }}>
               <div style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--accent-green)", boxShadow: "0 0 8px var(--accent-green)" }} />
@@ -241,7 +311,7 @@ function ProblemSection() {
             Illuminate doesn't see them. Your consultants charge $250–400/hr to navigate them manually.
           </p>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", borderRadius: 14, overflow: "hidden" }}>
+        <div className="stats-grid">
           {[
             { number: "4,500+", label: "Fields per Worker object", sub: "9 relationship patterns" },
             { number: "$250–400", label: "Per hour", sub: "Big 4 Workday consultants" },
@@ -353,7 +423,7 @@ function HowItWorks() {
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-blue)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "block" }}>HOW IT WORKS</span>
           <h2 style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.15 }}>Scan. Understand. Control.</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 40 }}>
+        <div className="hiw-grid">
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
             {DEMO_STEPS.map((step, i) => (
               <button key={step.phase} onClick={() => setActiveStep(i)} style={{
@@ -386,7 +456,7 @@ function BentoFeatures() {
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-blue)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "block" }}>CAPABILITIES</span>
           <h2 style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.15 }}>Intelligence your Workday doesn't have.</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", borderRadius: 16, overflow: "hidden" }}>
+        <div className="bento-grid">
           {BENTO_FEATURES.map((feature) => (
             <div key={feature.title} className="glow-border" style={{
               gridColumn: feature.span === "wide" ? "span 2" : "span 1",
@@ -411,7 +481,7 @@ function ComplianceSection() {
   return (
     <Section id="compliance">
       <Container>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
+        <div className="compliance-grid">
           <div>
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-blue)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "block" }}>COMPLIANCE</span>
             <h2 style={{ fontSize: 34, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.2, marginBottom: 18 }}>
@@ -478,10 +548,31 @@ function EarlyAccess() {
   const [email, setEmail] = useState("");
   const [company, setCompany] = useState("");
   const [role, setRole] = useState("");
-  const handleSubmit = useCallback((e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const handleSubmit = useCallback(async (e) => {
     if (e) e.preventDefault();
-    if (email && company) setSubmitted(true);
-  }, [email, company]);
+    if (!email || !company) return;
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("https://formspree.io/f/xgolyzay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ email, company, role }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError(data?.errors?.[0]?.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [email, company, role]);
   return (
     <Section id="early-access">
       <Container>
@@ -499,25 +590,30 @@ function EarlyAccess() {
               <div style={{ fontSize: 14, color: "var(--text-secondary)" }}>We'll reach out within 48 hours to discuss your Workday environment.</div>
             </div>
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 420, margin: "0 auto" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14, maxWidth: 420, margin: "0 auto" }}>
               {[
-                { placeholder: "Work email", value: email, onChange: setEmail, type: "email" },
-                { placeholder: "Company", value: company, onChange: setCompany, type: "text" },
-                { placeholder: "Role (optional)", value: role, onChange: setRole, type: "text" },
+                { placeholder: "Work email", value: email, onChange: setEmail, type: "email", name: "email" },
+                { placeholder: "Company", value: company, onChange: setCompany, type: "text", name: "company" },
+                { placeholder: "Role (optional)", value: role, onChange: setRole, type: "text", name: "role" },
               ].map(field => (
-                <input key={field.placeholder} type={field.type} placeholder={field.placeholder} value={field.value}
-                  onChange={e => field.onChange(e.target.value)}
+                <input key={field.placeholder} type={field.type} name={field.name} placeholder={field.placeholder} value={field.value}
+                  onChange={e => field.onChange(e.target.value)} required={field.name !== "role"}
                   style={{ width: "100%", padding: "13px 18px", borderRadius: 10, background: "var(--bg-secondary)", border: "1px solid var(--border-subtle)", color: "var(--text-primary)", fontSize: 14, fontFamily: "var(--font-sans)", outline: "none", transition: "border-color 0.3s" }}
                   onFocus={e => e.target.style.borderColor = "var(--border-glow-hover)"}
                   onBlur={e => e.target.style.borderColor = "var(--border-subtle)"} />
               ))}
-              <button onClick={handleSubmit} style={{ width: "100%", padding: "14px", borderRadius: 10, background: "var(--text-primary)", color: "var(--bg-primary)", fontSize: 14, fontWeight: 700, border: "none", cursor: "pointer", transition: "opacity 0.2s, transform 0.2s", fontFamily: "var(--font-sans)" }}
-                onMouseEnter={e => { e.target.style.opacity = "0.9"; e.target.style.transform = "translateY(-1px)"; }}
-                onMouseLeave={e => { e.target.style.opacity = "1"; e.target.style.transform = "translateY(0)"; }}>
-                Request Early Access
+              {error && (
+                <div style={{ padding: "10px 14px", borderRadius: 8, background: "rgba(239,91,91,0.08)", border: "1px solid rgba(239,91,91,0.2)", color: "var(--accent-red)", fontSize: 13, textAlign: "left" }}>
+                  {error}
+                </div>
+              )}
+              <button type="submit" disabled={loading} style={{ width: "100%", padding: "14px", borderRadius: 10, background: loading ? "var(--text-tertiary)" : "var(--text-primary)", color: "var(--bg-primary)", fontSize: 14, fontWeight: 700, border: "none", cursor: loading ? "not-allowed" : "pointer", transition: "opacity 0.2s, transform 0.2s", fontFamily: "var(--font-sans)", opacity: loading ? 0.7 : 1 }}
+                onMouseEnter={e => { if (!loading) { e.target.style.opacity = "0.9"; e.target.style.transform = "translateY(-1px)"; } }}
+                onMouseLeave={e => { e.target.style.opacity = loading ? "0.7" : "1"; e.target.style.transform = "translateY(0)"; }}>
+                {loading ? "Submitting…" : "Request Early Access"}
               </button>
               <p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>Read-only connection. No data leaves your tenant. SOC 2 Type II in progress.</p>
-            </div>
+            </form>
           )}
         </div>
       </Container>
@@ -529,13 +625,13 @@ function EarlyAccess() {
 function Footer() {
   return (
     <footer style={{ padding: "40px 24px", borderTop: "1px solid var(--border-subtle)" }}>
-      <Container style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <Container><div className="footer-inner">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 22, height: 22, borderRadius: 5, background: "linear-gradient(135deg, var(--accent-blue), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "white", fontFamily: "var(--font-mono)" }}>A</div>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, fontWeight: 600, color: "var(--text-secondary)", letterSpacing: "0.04em" }}>ARGOT LAYER</span>
         </div>
         <div style={{ fontSize: 12, color: "var(--text-tertiary)" }}>© 2026 Argot Layer. The semantic translation layer for Workday HCM.</div>
-      </Container>
+      </div></Container>
     </footer>
   );
 }
