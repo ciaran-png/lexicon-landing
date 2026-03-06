@@ -597,6 +597,43 @@ function BentoFeatures() {
   );
 }
 
+// ── Product Demo (Supademo) ───────────────────────────────────────
+function ProductDemo() {
+  return (
+    <Section id="product-demo">
+      <Container>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 48px" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-blue)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "block" }}>SEE IT IN ACTION</span>
+          <h2 style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.15, marginBottom: 16 }}>
+            Watch Argot translate your schema.
+          </h2>
+          <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--text-secondary)" }}>
+            Walk through a live scan — reconcile data schemas, inspect custom fields, and see how Argot resolves what Workday's native AI can't.
+          </p>
+        </div>
+        <div className="glow-border" style={{ background: "var(--bg-secondary)", borderRadius: 16, padding: 1, overflow: "hidden" }}>
+          <div style={{
+            position: "relative", boxSizing: "content-box", width: "100%",
+            aspectRatio: "1.89", padding: "40px 0",
+          }}>
+            <iframe
+              src="https://app.supademo.com/embed/cmmdwwlw426qknr99j5xr909c?embed_v=2&utm_source=embed"
+              loading="lazy"
+              title="Reconcile data schemas and inspect fields in Workday"
+              allow="clipboard-write"
+              frameBorder="0"
+              webkitallowfullscreen="true"
+              mozallowfullscreen="true"
+              allowFullScreen
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", borderRadius: 15 }}
+            />
+          </div>
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
 // ── Semantic Clean Room ───────────────────────────────────────────
 const CLEAN_ROOM_FIELDS_A = [
   { id: "cf_retention_bonus_tier_c", label: "Retention Bonus Tier", type: "Compensation" },
@@ -986,6 +1023,7 @@ export default function App() {
         <ProblemSection />
         <HowItWorks />
         <BentoFeatures />
+        <ProductDemo />
         <CleanRoomSection />
         <ComplianceSection />
         <EarlyAccess />
