@@ -17,12 +17,13 @@ const DEMO_STEPS = [
   { phase: "DISCOVER", label: "Scan Tenant Schema", description: "Argot connects to your Workday tenant and crawls every data source, field, and custom object. No manual configuration needed.", detail: "4,500+ fields across 16 data sources scanned in under 90 seconds", visual: "scan" },
   { phase: "DETECT", label: "Find Ghost Fields", description: "Workday silently omits fields your integration user can't see. Argot detects these invisible gaps by comparing your actual schema against the known standard.", detail: "23 ghost fields detected — fields your current tools don't know exist", visual: "detect" },
   { phase: "INFER", label: "Understand Meaning", description: "Custom fields like cf_variable_comp_plan_c have no documentation. Argot's semantic engine infers what each field actually means using pattern analysis and domain intelligence.", detail: "142 custom fields semantically resolved with 87% avg confidence", visual: "infer" },
+  { phase: "NORMALIZE", label: "Build Virtual Schema", description: "Argot constructs a bidirectional Virtual Schema — mapping every business term to its underlying technical field ID. This is the translation layer that makes natural language control possible.", detail: "Singleton cache: business terms ↔ technical identifiers", visual: "normalize" },
   { phase: "TRANSLATE", label: "Natural Language Control", description: "Ask questions in plain English. Argot translates to valid WQL, validates against your actual schema, and flags any compliance risks before execution.", detail: '"Show me all employees whose variable comp changed last quarter"', visual: "translate" },
 ];
 
 const BENTO_FEATURES = [
   { title: "Ghost Field Detection", description: "Workday's APIs silently omit fields when permissions are missing. You can't fix what you can't see. Argot maps expected vs. actual schema to reveal what's invisible.", icon: "\u{1F47B}", span: "wide" },
-  { title: "9,500+ Rows of Domain Intelligence", description: "Field mappings, security permissions, WQL syntax, HCIM standards, and API structures — curated from enterprise documentation across industries.", icon: "\u{1F9E0}", span: "normal" },
+  { title: "117,000+ Rows of Domain Intelligence", description: "Field mappings, security permissions, WQL syntax, HCIM standards, SOAP API schemas, and navigation paths — curated from 120+ sources across 19 institutions.", icon: "\u{1F9E0}", span: "normal" },
   { title: "EU AI Act Compliant", description: "Human-in-the-loop gates on high-risk HR fields. Full audit trails. Bias detection on compensation, hiring, and termination decisions. Ready for August 2026.", icon: "\u{1F6E1}\uFE0F", span: "normal" },
   { title: "Natural Language \u2192 WQL", description: "Business users describe what they need in plain English. Argot generates validated WQL with full explainability — every translation shows its reasoning chain.", icon: "\u{1F4AC}", span: "wide" },
   { title: "Semantic Inference Engine", description: "When cf_custom_field_55 has no documentation, Argot infers meaning from naming patterns, value distributions, and cross-tenant intelligence.", icon: "\u{1F52E}", span: "normal" },
@@ -77,6 +78,9 @@ const css = `
     .bento-grid { grid-template-columns: repeat(2, 1fr); }
     .bento-grid > div { grid-column: span 1 !important; }
     .compliance-grid { grid-template-columns: 1fr; gap: 40px; }
+    #clean-room .cleanroom-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+    #clean-room .cleanroom-svg-col { display: none !important; }
+    #clean-room .cleanroom-header { flex-wrap: wrap; gap: 16px; }
   }
 
   /* ── Tablet: <= 768px ─────────────────────────────────────────── */
@@ -256,7 +260,7 @@ function Nav() {
             <span style={{ fontSize: 10, fontWeight: 500, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "2px 7px", borderRadius: 4, fontFamily: "var(--font-mono)", letterSpacing: "0.08em" }}>LAYER</span>
           </div>
           <div className="nav-links">
-            {["How It Works", "Features", "Compliance"].map(label => (
+            {["How It Works", "Features", "Clean Room", "Compliance"].map(label => (
               <a key={label} href={`#${label.toLowerCase().replace(/\s+/g, "-")}`} style={{ color: "var(--text-secondary)", textDecoration: "none", fontSize: 13, fontWeight: 500, letterSpacing: "0.01em", transition: "color 0.3s" }}
                 onMouseEnter={e => e.target.style.color = "var(--text-primary)"} onMouseLeave={e => e.target.style.color = "var(--text-secondary)"}>{label}</a>
             ))}
@@ -272,7 +276,7 @@ function Nav() {
       </nav>
       <div className={`mobile-menu${menuOpen ? " open" : ""}`}>
         <button className="mobile-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">&#x2715;</button>
-        {["How It Works", "Features", "Compliance"].map(label => (
+        {["How It Works", "Features", "Clean Room", "Compliance"].map(label => (
           <a key={label} href={`#${label.toLowerCase().replace(/\s+/g, "-")}`} onClick={() => setMenuOpen(false)}>{label}</a>
         ))}
         <a href="#early-access" onClick={() => setMenuOpen(false)} style={{ background: "var(--text-primary)", color: "var(--bg-primary)", padding: "12px 32px", borderRadius: 10, fontWeight: 700 }}>Request Access</a>
@@ -461,6 +465,33 @@ function DemoVisual({ step, isActive }) {
       </div>
     );
   }
+  if (step.visual === "normalize") {
+    return (
+      <div style={shared}>
+        <div style={{ color: "var(--text-tertiary)", marginBottom: 16, fontSize: 10, letterSpacing: "0.08em" }}>VIRTUAL SCHEMA — bidirectional business term ↔ technical ID mapping</div>
+        {[
+          { business: "Variable Compensation Plan", technical: "cf_variable_comp_plan_c", source: "DS_Compensation" },
+          { business: "Termination Reason", technical: "cf_ee_term_rsn_v2", source: "DS_Worker_Core" },
+          { business: "Retention Bonus Tier", technical: "cf_retention_bonus_tier_c", source: "DS_Talent_Mgmt" },
+          { business: "Performance Override", technical: "cf_perf_tier_mgr_ovr", source: "DS_Talent_Mgmt" },
+        ].map((item, i) => (
+          <div key={item.technical} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8, animation: `slideInRight 0.4s ease-out ${i * 0.15}s both` }}>
+            <div style={{ flex: 1, padding: "8px 12px", borderRadius: 6, background: "rgba(78,205,196,0.06)", border: "1px solid rgba(78,205,196,0.12)" }}>
+              <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}>{item.business}</span>
+            </div>
+            <span style={{ color: "var(--accent-blue)", fontSize: 14, flexShrink: 0 }}>{"\u21C4"}</span>
+            <div style={{ flex: 1, padding: "8px 12px", borderRadius: 6, background: "rgba(91,141,239,0.06)", border: "1px solid rgba(91,141,239,0.12)" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-blue)" }}>{item.technical}</span>
+            </div>
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, color: "var(--text-tertiary)", flexShrink: 0, width: 100, textAlign: "right" }}>{item.source}</span>
+          </div>
+        ))}
+        <div style={{ marginTop: 12, padding: "8px 12px", borderRadius: 6, background: "rgba(78,205,196,0.06)", border: "1px solid rgba(78,205,196,0.12)", color: "var(--accent-cyan)", fontSize: 11 }}>
+          {"\u2713"} Virtual Schema cached — 761 fields across 16 sources in singleton SchemaManager
+        </div>
+      </div>
+    );
+  }
   if (step.visual === "infer") {
     return (
       <div style={shared}>
@@ -560,6 +591,224 @@ function BentoFeatures() {
               <p style={{ fontSize: 13, lineHeight: 1.7, color: "var(--text-secondary)" }}>{feature.description}</p>
             </div>
           ))}
+        </div>
+      </Container>
+    </Section>
+  );
+}
+
+// ── Semantic Clean Room ───────────────────────────────────────────
+const CLEAN_ROOM_FIELDS_A = [
+  { id: "cf_retention_bonus_tier_c", label: "Retention Bonus Tier", type: "Compensation" },
+  { id: "cf_equity_grant_v4", label: "Stock Grant Schedule", type: "Compensation" },
+  { id: "cf_ee_dob", label: "Employee Birth Date", type: "Date" },
+  { id: "cf_perf_tier_mgr_ovr", label: "Performance Override", type: "Tiered_Rating" },
+  { id: "cf_voluntary_id", label: "Self-ID Survey", type: "Status" },
+  { id: "cf_ada_accom_type", label: "ADA Accommodation", type: "Protected" },
+];
+const CLEAN_ROOM_FIELDS_B = [
+  { id: "cf_ret_bonus_level", label: "Retention Bonus Level", type: "Compensation" },
+  { id: "cf_stock_plan_type", label: "Equity Plan Type", type: "Compensation" },
+  { id: "cf_employee_birthdate", label: "DOB", type: "Date" },
+  { id: "cf_manager_rating_override", label: "Manager Rating Override", type: "Tiered_Rating" },
+  { id: "cf_self_id_survey", label: "Self-Identification", type: "Status" },
+  { id: "cf_wc_class_code", label: "Workers Comp Class", type: "Financial" },
+];
+const CLEAN_ROOM_MATCHES = [
+  { a: 0, b: 0, score: 85, color: "var(--accent-cyan)" },
+  { a: 1, b: 1, score: 72, color: "var(--accent-cyan)" },
+  { a: 2, b: 2, score: 91, color: "var(--accent-cyan)" },
+  { a: 3, b: 3, score: 78, color: "var(--accent-cyan)" },
+  { a: 4, b: 4, score: 48, color: "var(--accent-amber)" },
+];
+
+function CleanRoomSection() {
+  const [animStep, setAnimStep] = useState(-1);
+  const sectionRef = useRef(null);
+  const [hasTriggered, setHasTriggered] = useState(false);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasTriggered) {
+          setHasTriggered(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [hasTriggered]);
+
+  useEffect(() => {
+    if (!hasTriggered) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      setAnimStep(i);
+      i++;
+      if (i >= CLEAN_ROOM_MATCHES.length) clearInterval(timer);
+    }, 600);
+    return () => clearInterval(timer);
+  }, [hasTriggered]);
+
+  const fieldH = 46;
+  const fieldGap = 8;
+  const getY = (idx) => idx * (fieldH + fieldGap) + fieldH / 2;
+  const svgH = CLEAN_ROOM_FIELDS_A.length * (fieldH + fieldGap);
+
+  return (
+    <Section id="clean-room">
+      <Container>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 60px" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--accent-purple)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12, display: "block" }}>SEMANTIC CLEAN ROOM</span>
+          <h2 style={{ fontSize: 38, fontWeight: 700, letterSpacing: "-0.025em", lineHeight: 1.15, marginBottom: 18 }}>
+            M&A schema reconciliation.{" "}
+            <span style={{ color: "var(--text-tertiary)" }}>Automated.</span>
+          </h2>
+          <p style={{ fontSize: 16, lineHeight: 1.7, color: "var(--text-secondary)" }}>
+            When Company A acquires Company B, both run Workday with 500+ custom fields using different naming conventions.
+            The Clean Room identifies semantically equivalent fields across tenants using composite scoring — so your integration team
+            doesn't spend months doing it manually.
+          </p>
+        </div>
+
+        <div ref={sectionRef} className="glow-border" style={{ background: "var(--bg-secondary)", borderRadius: 16, padding: 32, overflow: "hidden" }}>
+          {/* Header bar */}
+          <div className="cleanroom-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, var(--accent-purple), var(--accent-blue))", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16 }}>{"\u{1F517}"}</div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "var(--text-primary)" }}>Cross-Tenant Analysis</div>
+                <div style={{ fontSize: 10, color: "var(--text-tertiary)", fontFamily: "var(--font-mono)" }}>Composite scoring: name similarity + type match + value overlap</div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 10 }}>
+              {[
+                { label: "Matched", count: 4, color: "var(--accent-cyan)" },
+                { label: "Ambiguous", count: 1, color: "var(--accent-amber)" },
+                { label: "Unmatched", count: 1, color: "var(--text-tertiary)" },
+              ].map(s => (
+                <div key={s.label} style={{ padding: "4px 12px", borderRadius: 6, background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-subtle)", textAlign: "center" }}>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: 16, fontWeight: 700, color: s.color }}>{animStep >= 0 ? s.count : "—"}</div>
+                  <div style={{ fontSize: 9, color: "var(--text-tertiary)" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Three-column layout: Tenant A | SVG Lines | Tenant B */}
+          <div className="cleanroom-grid" style={{ display: "grid", gridTemplateColumns: "1fr 120px 1fr", gap: 0, position: "relative" }}>
+            {/* Tenant A */}
+            <div>
+              <div style={{ marginBottom: 12 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-cyan)" }}>Acme Corp</span>
+                <span style={{ fontSize: 10, color: "var(--text-tertiary)", marginLeft: 8 }}>17 fields</span>
+              </div>
+              {CLEAN_ROOM_FIELDS_A.map((f, i) => {
+                const matchInfo = CLEAN_ROOM_MATCHES.find(m => m.a === i);
+                const isActive = matchInfo && animStep >= CLEAN_ROOM_MATCHES.indexOf(matchInfo);
+                const isUnmatched = !matchInfo && animStep >= CLEAN_ROOM_MATCHES.length - 1;
+                return (
+                  <div key={f.id} style={{
+                    padding: "10px 14px", marginBottom: fieldGap, borderRadius: 8, height: fieldH,
+                    display: "flex", alignItems: "center", justifyContent: "space-between",
+                    background: isActive ? "rgba(78,205,196,0.06)" : isUnmatched ? "rgba(239,91,91,0.04)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${isActive ? "rgba(78,205,196,0.2)" : isUnmatched ? "rgba(239,91,91,0.12)" : "var(--border-subtle)"}`,
+                    transition: "all 0.5s ease", opacity: isUnmatched ? 0.4 : 1,
+                  }}>
+                    <div>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: "var(--text-primary)" }}>{f.id}</div>
+                      <div style={{ fontSize: 10, color: "var(--text-tertiary)", marginTop: 2 }}>{f.type}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* SVG match lines */}
+            <div className="cleanroom-svg-col" style={{ position: "relative" }}>
+              <svg width="120" height={svgH} style={{ position: "absolute", top: 32, left: 0 }}>
+                {CLEAN_ROOM_MATCHES.map((m, idx) => {
+                  if (animStep < idx) return null;
+                  const y1 = getY(m.a);
+                  const y2 = getY(m.b);
+                  const midX = 60;
+                  return (
+                    <g key={idx}>
+                      <path
+                        d={`M 0 ${y1} C 40 ${y1}, 80 ${y2}, 120 ${y2}`}
+                        fill="none" stroke={m.color} strokeWidth={1.5} strokeOpacity={0.6}
+                        style={{ animation: `fadeInUp 0.5s ease-out ${idx * 0.1}s both` }}
+                      />
+                      <rect x={midX - 18} y={(y1 + y2) / 2 - 10} width={36} height={20} rx={10}
+                        fill="var(--bg-card, var(--bg-secondary))" stroke={m.color} strokeWidth={1}
+                        style={{ animation: `fadeInUp 0.4s ease-out ${idx * 0.1 + 0.2}s both` }}
+                      />
+                      <text x={midX} y={(y1 + y2) / 2 + 4} textAnchor="middle" fill={m.color}
+                        fontSize={9} fontWeight={700} fontFamily="var(--font-mono)"
+                        style={{ animation: `fadeInUp 0.4s ease-out ${idx * 0.1 + 0.2}s both` }}
+                      >{m.score}%</text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+
+            {/* Tenant B */}
+            <div>
+              <div style={{ marginBottom: 12, textAlign: "right" }}>
+                <span style={{ fontSize: 10, color: "var(--text-tertiary)", marginRight: 8 }}>18 fields</span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: "var(--accent-purple)" }}>Globex Inc</span>
+              </div>
+              {CLEAN_ROOM_FIELDS_B.map((f, i) => {
+                const matchInfo = CLEAN_ROOM_MATCHES.find(m => m.b === i);
+                const isActive = matchInfo && animStep >= CLEAN_ROOM_MATCHES.indexOf(matchInfo);
+                const isUnmatched = !matchInfo && animStep >= CLEAN_ROOM_MATCHES.length - 1;
+                return (
+                  <div key={f.id} style={{
+                    padding: "10px 14px", marginBottom: fieldGap, borderRadius: 8, height: fieldH,
+                    display: "flex", alignItems: "center", justifyContent: "flex-end",
+                    background: isActive ? "rgba(155,139,239,0.06)" : isUnmatched ? "rgba(239,91,91,0.04)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${isActive ? "rgba(155,139,239,0.2)" : isUnmatched ? "rgba(239,91,91,0.12)" : "var(--border-subtle)"}`,
+                    transition: "all 0.5s ease", opacity: isUnmatched ? 0.4 : 1,
+                  }}>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, fontWeight: 600, color: "var(--text-primary)" }}>{f.id}</div>
+                      <div style={{ fontSize: 10, color: "var(--text-tertiary)", marginTop: 2 }}>{f.type}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Scoring breakdown */}
+          <div style={{ marginTop: 24, padding: "16px 20px", borderRadius: 10, background: "rgba(255,255,255,0.02)", border: "1px solid var(--border-subtle)" }}>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--text-tertiary)", letterSpacing: "0.08em", marginBottom: 12 }}>SCORING DIMENSIONS</div>
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap" }}>
+              {[
+                { label: "Field Name Similarity", points: "0–40 pts", desc: "Levenshtein + token overlap on technical IDs and business terms" },
+                { label: "Inferred Type Match", points: "0–35 pts", desc: "Exact, partial (related types), or mismatch" },
+                { label: "Sample Value Overlap", points: "0–25 pts", desc: "Jaccard similarity on normalized value sets" },
+              ].map(d => (
+                <div key={d.label} style={{ flex: 1, minWidth: 200 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "var(--text-primary)" }}>{d.label}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: 10, color: "var(--accent-blue)", background: "var(--accent-blue-dim)", padding: "1px 6px", borderRadius: 4 }}>{d.points}</span>
+                  </div>
+                  <div style={{ fontSize: 11, color: "var(--text-tertiary)", lineHeight: 1.5 }}>{d.desc}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ display: "flex", gap: 16, marginTop: 14, fontSize: 11, fontFamily: "var(--font-mono)" }}>
+              <span style={{ color: "var(--accent-cyan)" }}>{"\u25CF"} Matched ≥ 65</span>
+              <span style={{ color: "var(--accent-amber)" }}>{"\u25CF"} Ambiguous 40–64</span>
+              <span style={{ color: "var(--text-tertiary)" }}>{"\u25CF"} Unmatched &lt; 40</span>
+            </div>
+          </div>
         </div>
       </Container>
     </Section>
@@ -737,6 +986,7 @@ export default function App() {
         <ProblemSection />
         <HowItWorks />
         <BentoFeatures />
+        <CleanRoomSection />
         <ComplianceSection />
         <EarlyAccess />
         <Footer />
